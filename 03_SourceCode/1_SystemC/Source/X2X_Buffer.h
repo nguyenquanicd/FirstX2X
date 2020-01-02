@@ -1,74 +1,77 @@
 /**
- * X2X_Buffer IP
+ * X2X_BUFFER IP
  */
 
 #include "systemc.h"
+#include "X2X_FIFO.h"
 
 #ifndef _X2X_BUFFER_H
 #define _X2X_BUFFER_H
 
-#define X2X_RESET_TYPE false
-#define X2X_PUSH_TYPE true
-#define X2X_BUF_POP_TYPE true
-#define X2X_BUF_DATA_NUM 16
-
 template<unsigned int DATA_WIDTH >
-class X2X_Buffer : public sc_module {
+class X2X_BUFFER : public sc_module {
 private:
-    struct DataStructure
-    {
-        bool mData [DATA_WIDTH];
-        bool isEmpty;
-        bool isReaden;
-        bool isWritten;
-        DataStructure() {
-            for (unsigned int index = 0; index < DATA_WIDTH; index++){
-                mData[index] = 0;
-            }
-            isEmpty = true;
-            isReaden = false;
-            isWritten = false;
-        }
-        void RemoveData() {
-            isEmpty  = true;
-            isReaden = true;
-            for (unsigned int index = 0; index < DATA_WIDTH; index++) {
-                mData[index] = false;
-            }
-        }
-        void ResetRead(){
-            isReaden = false;
-        }
-        void ResetWrite(){
-            isWritten = false;
-        }
-    };
-    DataStructure bufferData[X2X_BUF_DATA_NUM];
-    bool isPush;
-    bool isPop;
+
 public: 
-    X2X_Buffer(sc_module_name name);
-    ~X2X_Buffer( );
-    // input signal
-    sc_in<bool> In[DATA_WIDTH];
-    sc_in<bool> Push;
-    sc_in<bool> Pop;
-    sc_in<bool> Clock;
-    sc_in<bool> Reset;
+    X2X_BUFFER(sc_module_name name);
+    ~X2X_BUFFER( );
+    // slave port signal
+    sc_in<bool>      ACLK                                   // AXI bus clock.
+        sc_in<bool>      ARESETN                                 // AXI active-Low reset
+        // AXI Write Address Channel Signals (AW)
+        sc_in<bool>      S_AXI_AWID[C_S_AXI_ID_WIDTH]            // AXI address Write ID.
+        sc_in<bool>      S_AXI_AWADDR[C_S_AXI_ADDR_WIDTH]        // AXI Write address.
+        sc_in<bool>      S_AXI_AWLEN[7 + 1]                        // AXI address Write burst length.
+        sc_in<bool>      S_AXI_AWSIZE[2 + 1]                        // AXI address Write burst size.
+        sc_in<bool>      S_AXI_AWBURST[1 + 1]                    // AXI address Write burst type.
+        sc_in<bool>      S_AXI_AWLOCK                            // AXI Write address lock signal.
+        sc_in<bool>      S_AXI_AWCACHE[3 + 1]                    // AXI Write address cache control signal.
+        sc_in<bool>      S_AXI_AWPROT[2 + 1]                        // AXI Write address protection signal.
+        sc_in<bool>      S_AXI_AWREGION[3 + 1]                    // Channel address region index
+        sc_in<bool>      S_AXI_AWQOS[3 + 1]                        // Channel Quality of Service (QoS).
+        sc_in<bool>      S_AXI_AWUSER[C_S_AXI_AWUSER_WIDTH]        // User-defined AW Channel signals.
+        sc_in<bool>      S_AXI_AWVALID                          // AXI Write address valid.
+        sc_out<bool>     S_AXI_AWREADY                          // AXI Write address ready.
+        // AXI Write Data Channel Signals (W)
+        sc_in<bool>      S_AXI_WID[C_S_AXI_ID_WIDTH]               // AXI3 Write ID.
+        sc_in<bool>      S_AXI_WDATA[C_S_AXI_DATA_WIDTH]        // AXI Write data.
+        sc_in<bool>      S_AXI_WSTRB[C_S_AXI_DATA_WIDTH / 8]     // AXI Write data strobes.
+        sc_in<bool>      S_AXI_WLAST                            // AXI Write data last signal. Indicates the last transfer in a Writeburst.
+        sc_in<bool>      S_AXI_WUSER[C_S_AXI_WUSER_WIDTH]    // User-defined W Channel signals.
+        sc_in<bool>      S_AXI_WVALID                            // AXI Write data valid.
+        sc_out<bool>     S_AXI_WREADY                            // AXI Write data ready.
+        // AXI Write Response Channel Signals (B)
+        sc_out<bool>     S_AXI_BID[C_S_AXI_ID_WIDTH]               // AXI Write response ID.
+        sc_out<bool>     S_AXI_BRESP[1 + 1]                      // AXI Write response code.
+        sc_out<bool>     S_AXI_BUSER                            // User-defined B channel signals.
+        sc_out<bool>     S_AXI_BVALID                       // AXI Write response valid.
+        sc_in<bool>      S_AXI_BREADY                      // Write response ready.
+        // AXI Read Address Channel Signals (AR)
+        sc_in<bool>      S_AXI_ARID[C_S_AXI_ID_WIDTH]         // AXI address Read ID.
+        sc_in<bool>      S_AXI_ARADDR[C_S_AXI_ADDR_WIDTH]    // AXI Read address.
+        sc_in<bool>      S_AXI_ARLEN[7 + 1]                      // AXI address Read burst length.
+        sc_in<bool>      S_AXI_ARSIZE[2 + 1]                     // AXI address Read burst size.
+        sc_in<bool>      S_AXI_ARBURST[1 + 1]                     // AXI address Read burst type.
+        sc_in<bool>      S_AXI_ARLOCK                             // AXI Read address lock signal.
+        sc_in<bool>      S_AXI_ARCACHE[3 + 1]                  // AXI Read address cache control signal.
+        sc_in<bool>      S_AXI_ARPROT[2 + 1]                   // AXI Read address protection signal.
+        sc_in<bool>      S_AXI_ARREGION[3 + 1]               // Channel address region index.
+        sc_in<bool>      S_AXI_ARQOS[3 + 1]                       // Channel Quality of Service.
+        sc_in<bool>      S_AXI_ARUSER[C_S_AXI_ARUSER_WIDTH]    // User-defined AR Channel signals.
+        sc_in<bool>      S_AXI_ARVALID                       // AXI Read address valid.
+        sc_out<bool>     S_AXI_ARREADY                       // AXI Read address ready.
+        // AXI Read Data Channel Signals (R)
+        sc_out<bool>  S_AXI_RID[C_S_AXI_ID_WIDTH]               // AXI Read data response ID.
+        sc_out<bool>  S_AXI_RDATA[C_S_AXI_DATA_WIDTH]       // AXI Read data.
+        sc_out<bool>  S_AXI_RRESP[1 + 1]                          // AXI Read response code.
+        sc_out<bool>  S_AXI_RLAST                            // AXI Read data last signal.
+        sc_out<bool>  S_AXI_RUSER[C_S_AXI_RUSER_WIDTH]      // User-defined R Channel signals.
+        sc_out<bool>  S_AXI_RVALID                           // AXI Read valid.
+        sc_in<bool>   S_AXI_RREADY                               // Read ready.
     // output signal
-    sc_out<bool> Out[DATA_WIDTH];
-    sc_out<bool> Empty;
-    sc_out<bool> Full;
+
     // method 
-    void PushHandler();
-    void PopHandler();
-    void ResetWritten();
-    void ResetReaden();
-    void SetData(unsigned int numElement);
-    void GetData(unsigned int numElement);
-    void BufferCoreHandler();
-    bool GetEmpty();
-    bool GetFull();
+
 };
 
 #endif //_X2X_BUFFER_H
