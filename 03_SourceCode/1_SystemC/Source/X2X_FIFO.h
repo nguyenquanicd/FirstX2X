@@ -46,8 +46,18 @@ private:
     DataStructure bufferData[X2X_BUF_DATA_NUM];
     bool isPush;
     bool isPop;
+    // method 
+    void PushHandlerMethod( );
+    void PopHandlerMethod( );
+    void ResetWritten( );
+    void ResetReaden( );
+    void SetData(unsigned int numElement);
+    void GetData(unsigned int numElement);
+    void BufferCoreHandlerMethod( );
+    bool GetEmpty( );
+    bool GetFull( );
 public: 
-    X2X_FIFO(sc_module_name name);
+    X2X_FIFO( );
     ~X2X_FIFO( );
     // input signal
     sc_in<bool> In[DATA_WIDTH];
@@ -59,16 +69,7 @@ public:
     sc_out<bool> Out[DATA_WIDTH];
     sc_out<bool> Empty;
     sc_out<bool> Full;
-    // method 
-    void PushHandlerMethod();
-    void PopHandlerMethod();
-    void ResetWritten();
-    void ResetReaden();
-    void SetData(unsigned int numElement);
-    void GetData(unsigned int numElement);
-    void BufferCoreHandlerMethod();
-    bool GetEmpty();
-    bool GetFull();
+
 };
 
 #endif //_X2X_FIFO_H

@@ -8,8 +8,9 @@
   * Constructor
   */
 template<unsigned int DATA_WIDTH >
-X2X_FIFO<DATA_WIDTH>::X2X_FIFO(sc_module_name name)
+X2X_FIFO<DATA_WIDTH>::X2X_FIFO( )
 {
+
     Empty.initialize(true);
     Full.initialize(false);
     for(unsigned int index = 0; index < DATA_WIDTH; index++){
@@ -32,7 +33,6 @@ X2X_FIFO<DATA_WIDTH>::X2X_FIFO(sc_module_name name)
     sensitive << Clock.pos( );
     sensitive << Reset.neg( );
     dont_initialize( );
-
 }
 
 /**
