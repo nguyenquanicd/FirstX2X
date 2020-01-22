@@ -2,7 +2,6 @@
  * X2X_BUFFER IP
  */
 
-#include "systemc.h"
 #include "X2X_FIFO.h"
 #include "X2X_FIFO.cpp"
 #include "AXI_Interconnection.h"
@@ -138,7 +137,7 @@ public:
     sc_out<bool>      M_AXI_WLAST;                        // AXI Write data last signal. Indicates the last transfer in a Writeburst.
     sc_out<bool>      M_AXI_WUSER[C_S_AXI_WUSER_WIDTH];   // User-defined W Channel signals.
     sc_out<bool>      M_AXI_WVALID;                       // AXI Write data valid.
-    sc_in<bool>       M_AXI_WREADY;                       // AXI Write data ready.
+    //sc_in<bool>       M_AXI_WREADY;                       // AXI Write data ready.
     // AXI Write Response Channel Signals (B)
     sc_in<bool>       M_AXI_BID[C_S_AXI_ID_WIDTH];        // AXI Write response ID.
     sc_in<bool>       M_AXI_BRESP[PRAM_AXI_RRESP];        // AXI Write response code.
@@ -158,7 +157,7 @@ public:
     sc_out<bool>      M_AXI_ARQOS[PRAM_AXI_AxQOS];        // Channel Quality of Service.
     sc_out<bool>      M_AXI_ARUSER[C_S_AXI_ARUSER_WIDTH]; // User-defined AR Channel signals.
     sc_out<bool>      M_AXI_ARVALID;                      // AXI Read address valid.
-    sc_in<bool>       M_AXI_ARREADY;                      // AXI Read address ready.
+    //sc_in<bool>       M_AXI_ARREADY;                      // AXI Read address ready.
     // AXI Read Data channel Signals (R)
     sc_in<bool>       M_AXI_RID[C_S_AXI_ID_WIDTH];        // AXI Read data response ID.
     sc_in<bool>       M_AXI_RDATA[C_S_AXI_DATA_WIDTH];    // AXI Read data.
@@ -166,7 +165,7 @@ public:
     sc_in<bool>       M_AXI_RLAST;                        // AXI Read data last signal.
     sc_in<bool>       M_AXI_RUSER[C_S_AXI_RUSER_WIDTH];   // User-defined R Channel signals.
     sc_in<bool>       M_AXI_RVALID;                       // AXI Read valid.
-    sc_out<bool>      M_AXI_RREADY;                       // AXI Read valid.
+    sc_out<bool>      M_AXI_RREADY;                       // AXI Read ready.
 };
 
 #endif //_X2X_BUFFER_H
