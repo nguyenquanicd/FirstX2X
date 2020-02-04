@@ -8,14 +8,30 @@
 
 class X2X_DECODER: public sc_module {
 private: 
-    void InsertMasterIDMethod(); 
-    void JudgmentSlaveAddressMethod();
+    void InsertAWMasterIDMethod();
+    void InsertWMasterIDMethod();
+    void InsertARMasterIDMethod();
+    void JudgmentARAddressMethod();
+    void JudgmentAWAddressMethod();
     void BChannelHandlerMethod();
     void RChannelHandlerMethod();
-
+    void AwPopOutMethod();
+    void WPopOutMethod();
+    void ArPopOutMethod();
+    void AWSelectorMethod();
+    void WSelectorMethod();
+    void ARSelectorMethod();
+    bool        isAWAddressMatch[PRAM_SLAVE_NUM];
+    bool        isARAddressMatch[PRAM_SLAVE_NUM];
+    bool        m_AXI_AWID[C_S_AXI_ID_WIDTH];
+    bool        m_AXI_ARID[C_S_AXI_ID_WIDTH];
+    bool        m_AXI_WID[C_S_AXI_ID_WIDTH];
+    sc_dt::sc_uint<C_S_AXI_ADDR_WIDTH> m_AXI_ARADDR;
+    sc_dt::sc_uint<C_S_AXI_ADDR_WIDTH> m_AXI_AWADDR;
 public:
     sc_dt::sc_uint<C_S_AXI_ADDR_WIDTH> start_Address[PRAM_SLAVE_NUM];
     sc_dt::sc_uint<C_S_AXI_ADDR_WIDTH> end_Address[PRAM_SLAVE_NUM];
+    unsigned int masterID;
     X2X_DECODER( );
     ~X2X_DECODER( );
     // port declare
@@ -99,11 +115,11 @@ public:
     sc_out<bool>      M_AXI_WVALID[PRAM_SLAVE_NUM];                       // AXI Write data valid.
     //sc_in<bool>       M_AXI_WREADY;                       // AXI Write data ready.
     // AXI Write Response Channel Signals (B)
-    sc_in<bool>       M_AXI_BID[PRAM_SLAVE_NUM][C_S_AXI_ID_WIDTH];        // AXI Write response ID.
-    sc_in<bool>       M_AXI_BRESP[PRAM_SLAVE_NUM][PRAM_AXI_RRESP];        // AXI Write response code.
-    sc_in<bool>       M_AXI_BUSER[PRAM_SLAVE_NUM];                        // User-defined B channel signals.
-    sc_in<bool>       M_AXI_BVALID[PRAM_SLAVE_NUM];                       // AXI Write response valid.
-    sc_out<bool>      M_AXI_BREADY[PRAM_SLAVE_NUM];                       // Write response ready.
+    sc_in<bool>       M_AXI_BID[C_S_AXI_ID_WIDTH];        // AXI Write response ID.
+    sc_in<bool>       M_AXI_BRESP[PRAM_AXI_RRESP];        // AXI Write response code.
+    sc_in<bool>       M_AXI_BUSER;                        // User-defined B channel signals.
+    sc_in<bool>       M_AXI_BVALID;                       // AXI Write response valid.
+    sc_out<bool>      M_AXI_BREADY;                       // Write response ready.
     // AXI Read Address Channel Signals (AR)
     sc_out<bool>      M_AXI_ARID[PRAM_SLAVE_NUM][C_S_AXI_ID_WIDTH];       // AXI address Read ID.
     sc_out<bool>      M_AXI_ARADDR[PRAM_SLAVE_NUM][C_S_AXI_ADDR_WIDTH];   // AXI Read address.
@@ -117,15 +133,15 @@ public:
     sc_out<bool>      M_AXI_ARQOS[PRAM_SLAVE_NUM][PRAM_AXI_AxQOS];        // Channel Quality of Service.
     sc_out<bool>      M_AXI_ARUSER[PRAM_SLAVE_NUM][C_S_AXI_ARUSER_WIDTH]; // User-defined AR Channel signals.
     sc_out<bool>      M_AXI_ARVALID[PRAM_SLAVE_NUM];                      // AXI Read address valid.
-    sc_in<bool>       M_AXI_ARREADY;                                      // axi arbiter AR ready out.
+    sc_in<bool>       M_AXI_ARREADY[PRAM_SLAVE_NUM];                                      // axi arbiter AR ready out.
     // AXI Read Data channel Signals (R)
-    sc_in<bool>       M_AXI_RID[PRAM_SLAVE_NUM][C_S_AXI_ID_WIDTH];        // AXI Read data response ID.
-    sc_in<bool>       M_AXI_RDATA[PRAM_SLAVE_NUM][C_S_AXI_DATA_WIDTH];    // AXI Read data.
-    sc_in<bool>       M_AXI_RRESP[PRAM_SLAVE_NUM][PRAM_AXI_RRESP];        // AXI Read response code.
-    sc_in<bool>       M_AXI_RLAST[PRAM_SLAVE_NUM];                        // AXI Read data last signal.
-    sc_in<bool>       M_AXI_RUSER[PRAM_SLAVE_NUM][C_S_AXI_RUSER_WIDTH];   // User-defined R Channel signals.
-    sc_in<bool>       M_AXI_RVALID[PRAM_SLAVE_NUM];                       // AXI Read valid.
-    sc_out<bool>      M_AXI_RREADY[PRAM_SLAVE_NUM];                       // AXI Read ready.
+    sc_in<bool>       M_AXI_RID[C_S_AXI_ID_WIDTH];        // AXI Read data response ID.
+    sc_in<bool>       M_AXI_RDATA[C_S_AXI_DATA_WIDTH];    // AXI Read data.
+    sc_in<bool>       M_AXI_RRESP[PRAM_AXI_RRESP];        // AXI Read response code.
+    sc_in<bool>       M_AXI_RLAST;                        // AXI Read data last signal.
+    sc_in<bool>       M_AXI_RUSER[C_S_AXI_RUSER_WIDTH];   // User-defined R Channel signals.
+    sc_in<bool>       M_AXI_RVALID;                       // AXI Read valid.
+    sc_out<bool>      M_AXI_RREADY;                       // AXI Read ready.
 };
 
 #endif //_X2X_DECODER_H

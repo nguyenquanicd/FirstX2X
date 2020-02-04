@@ -23,5 +23,7 @@
 #define PRAM_SLAVE_NUM 1
 // define master num
 #define PRAM_MASTER_NUM 1
+// address range
 
+#define PRAM_BIT_INSERTID 5
 #endif //_AXI_INTERCONNECTION_H
